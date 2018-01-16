@@ -85,7 +85,11 @@ module WlcSnmp
         user: MIB_LWAPP_CLIENT_USER,
         ssid: MIB_LWAPP_CLIENT_SSID,
       ).map do |data|
-        ip = data[:ip].to_s.unpack("C*").map(&:to_s).join(?.)
+        if data[:ip].is_a?(SNMP::IpAddress)
+          ip = data[:ip].to_s
+        else
+          ip = data[:ip].to_s.unpack("C*").map(&:to_s).join(?.)
+        end
         mac = airespace_clients[ip] ? airespace_clients[ip] : nil
         ap_mac = unpack_mac(data[:ap_mac])
 
